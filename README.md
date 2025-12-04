@@ -7,8 +7,8 @@ O objetivo é aprender e aplicar conceitos da disciplina, explorando desde a an�
 - Python
 
 ## 👥 Integrantes
-- 👨‍💻 Hiakewve Santos Alves
-- 👨‍💻 Miguel Menezes Andrade
+- 👨‍💻 [Hiakewve Santos Alves](https://github.com/Hiakewve)
+- 👨‍💻 [Miguel Menezes Andrade](https://github.com/Zerxf-exe)
 - 👨‍💻 Vinicius Meneses Oliveira
 
 **Professor:** [André Luiz Menezes](https://github.com/andreluisms)
