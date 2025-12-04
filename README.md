@@ -11,7 +11,7 @@ O objetivo é aprender e aplicar conceitos da disciplina, explorando desde a an�
 - 👨‍💻 Miguel Menezes Andrade
 - 👨‍💻 Vinicius Meneses Oliveira
 
-**Professor:** André Luiz Menezes
+**Professor:** [André Luiz Menezes](https://github.com/andreluisms)
 
 ## 📋 Passos a seguir
 
