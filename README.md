@@ -27,5 +27,3 @@ O objetivo é aprender e aplicar conceitos da disciplina, explorando desde a an�
 6. **Atividade 6**: Análise Semântica
     - Exemplo Análise Semântica
 7. **Atividade 7**: Geração de Assembly.
-
-8. Teste de GitHub
