@@ -10,6 +10,7 @@ O objetivo é aprender e aplicar conceitos da disciplina, explorando desde a an�
 - 👨‍💻 [Hiakewve Santos Alves](https://github.com/Hiakewve)
 - 👨‍💻 [Miguel Menezes Andrade](https://github.com/Zerxf-exe)
 - 👨‍💻 [Vinicius Meneses Oliveira](https://github.com/viniciusmeneses159)
+- 👨‍💻 [jose Wellington Carvalho Santos](https://github.com/wellington143)
 
 **Professor:** [André Luiz Menezes](https://github.com/andreluisms)
 
