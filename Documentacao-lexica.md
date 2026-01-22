@@ -20,23 +20,33 @@ Estes termos são os pilares da gramática da linguagem. Por serem reservados pa
 
 A V utiliza símbolos específicos para manipulação de dados. Uma característica única é a ausência de incrementos como `++` em expressões para evitar ambiguidades.
 
-### Cálculos Matemáticos
-* `+`, `-`, `*`, `/`, `%` : Operações básicas.
-* `**` : Exponenciação.
+### 1. Operadores Unários (Maior Precedência)
+* `! ~ -` : Negação lógica, NOT de bits e sinal negativo.
 
-### Comparações e Validação
-* `==` (Igualdade), `!=` (Desigualdade).
-* `<`, `>`, `<=`, `>=` (Comparação de magnitude).
+### 2. Exponenciação
+* `**` : Cálculo de potência.
 
-### Operações Lógicas e Bitwise
-* `&&` (E lógico), `||` (OU lógico), `!` (Negação).
-* `&`, `|`, `^`, `~` (Operadores de bits: AND, OR, XOR, NOT).
-* `<<`, `>>` (Deslocamento de bits).
+### 3. Operadores Multiplicativos e de Bits
+* `* / %` : Multiplicação, divisão e resto.
+* `<< >>` : Deslocamento de bits (Shifts).
+* `&` : AND de bits.
 
-### Atribuição Dinâmica
+### 4. Operadores Aditivos e de Bits
+* `+ -` : Soma e subtração.
+* `| ^` : OR e XOR de bits.
+
+### 5. Comparações e Validação
+* `== !=` : Igualdade e desigualdade.
+* `< > <= >=` : Comparação de magnitude.
+
+### 6. Operações Lógicas
+* `&&` : E lógico.
+* `||` : OU lógico.
+
+### 7. Atribuição (Menor Precedência)
 * `:=` : Declaração com inferência de tipo.
 * `=` : Atribuição simples.
-* `+=`, `-=`, `*=`, `/=` : Atribuições compostas.
+* `+= -= *= /=` : Atribuições compostas.
 
 ---
 
@@ -47,7 +57,7 @@ Símbolos que organizam a hierarquia e o escopo do código:
 * `{ }` : Envolvem blocos de código e corpos de funções.
 * `[ ]` : Utilizados para indexação e definição de arrays/mapas.
 * `( )` : Agrupam expressões e delimitam parâmetros de funções.
-* `?` / `!` : Marcadores de tipos opcionais ou que podem retornar erros.
+* `? !` : Marcadores de tipos opcionais ou que podem retornar erros.
 
 ---
 
@@ -83,18 +93,18 @@ Diferente de linguagens como Lua, a V trata strings de forma muito específica:
 
 Essenciais para a leitura humana, são ignorados pelo processo de compilação:
 
-```v
+```
 // Comentário de linha única.
 
 /* Comentário de múltiplas 
    linhas ou blocos.
 */
-````
-----
+```
+---
 ## 8. Diagnóstico de Integridade (Erros)
 
 O compilador atua como a primeira linha de defesa contra bugs:
 
-* **Erro de Lexer:** Caractere inválido ou não reconhecido.
-* **Erro de Mutabilidade:** Tentar alterar uma variável sem o modificador `mut`.
-* **Aviso de Variável Não Utilizada:** A V **não compila** se houver variáveis declaradas que não são usadas (garantia de código limpo).
+* **Erro de Lexer** : Caractere inválido ou não reconhecido.
+* **Erro de Mutabilidade** : Tentar alterar uma variável sem o modificador `mut`.
+* **Aviso de Variável Não Utilizada** : A V **não compila** se houver variáveis declaradas que não são usadas (garantia de código limpo).
