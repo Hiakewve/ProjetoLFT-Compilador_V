@@ -11,9 +11,7 @@ Estes termos são os pilares da gramática da linguagem. Por serem reservados pa
 | Categoria | Palavras-chave |
 | :--- | :--- |
 | **Controle e Fluxo** | `if`, `else`, `for`, `match`, `break`, `continue`, `return`, `defer`, `goto` |
-| **Estrutura de Dados** | `struct`, `interface`, `union`, `enum`, `type`, `module`, `import` |
 | **Definições e Visibilidade** | `fn`, `const`, `mut`, `pub`, `shared`, `static` |
-| **Concorrência e Segurança** | `go`, `select`, `lock`, `rlock`, `atomic`, `unsafe` |
 | **Outros** | `as`, `asm`, `assert`, `in`, `is`, `none`, `or`, `sizeof`, `typeof`, `false`, `true` |
 
 ---
@@ -50,7 +48,6 @@ Símbolos que organizam a hierarquia e o escopo do código:
 * `[ ]` : Utilizados para indexação e definição de arrays/mapas.
 * `( )` : Agrupam expressões e delimitam parâmetros de funções.
 * `?` / `!` : Marcadores de tipos opcionais ou que podem retornar erros.
-* `$` : Prefixo para funções de tempo de compilação (*comptime*).
 
 ---
 
