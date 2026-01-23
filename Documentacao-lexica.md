@@ -1,110 +1,165 @@
-# Especificações Léxicas – Linguagem V
+# Documentação Léxica – Linguagem V
 
-A **V** é uma linguagem compilada estática que prioriza a manutenção de código e segurança. Diferente de linguagens de script, seu léxico é desenhado para permitir uma compilação de passagem única extremamente veloz.
+## 1. Introdução
 
----
+Este documento descreve os elementos léxicos de um subconjunto da linguagem de programação V, definido para fins didáticos no contexto da disciplina de Linguagens Formais e Tradutores.
 
-## 1. Keywords Centrais (Vocabulário Nativo)
+A linguagem V é uma linguagem compilada e estaticamente tipada, projetada para oferecer simplicidade, desempenho e segurança. Para viabilizar a implementação de um compilador completo dentro do escopo acadêmico da disciplina, foi definido um subconjunto da linguagem original, preservando suas principais características sintáticas e semânticas.
 
-Estes termos são os pilares da gramática da linguagem. Por serem reservados para a lógica interna do compilador, não podem ser reutilizados para nomear funções ou variáveis.
+A análise léxica é a primeira etapa do processo de compilação e tem como objetivo transformar o código-fonte em uma sequência de tokens, que serão utilizados pelas fases subsequentes do compilador.
 
-| Categoria | Palavras-chave |
-| :--- | :--- |
-| **Controle e Fluxo** | `if`, `else`, `for`, `match`, `break`, `continue`, `return`, `defer`, `goto` |
-| **Definições e Visibilidade** | `fn`, `const`, `mut`, `pub`, `shared`, `static` |
-| **Outros** | `as`, `asm`, `assert`, `in`, `is`, `none`, `or`, `sizeof`, `typeof`, `false`, `true` |
+## 2. Palavras Reservadas
 
----
+As palavras reservadas são identificadores com significado especial na linguagem e não podem ser utilizadas como nomes de variáveis, funções ou outros símbolos definidos pelo programador.
 
-## 2. Lógica e Aritmética (Operadores)
+### 2.1. Literais Booleanos
 
-A V utiliza símbolos específicos para manipulação de dados. Uma característica única é a ausência de incrementos como `++` em expressões para evitar ambiguidades.
+true — representa o valor booleano verdadeiro.
 
-### 1. Operadores Unários (Maior Precedência)
-* `! ~ -` : Negação lógica, NOT de bits e sinal negativo.
+false — representa o valor booleano falso.
 
-### 2. Exponenciação
-* `**` : Cálculo de potência.
+### 2.2. Controle de Fluxo
 
-### 3. Operadores Multiplicativos e de Bits
-* `* / %` : Multiplicação, divisão e resto.
-* `<< >>` : Deslocamento de bits (Shifts).
-* `&` : AND de bits.
+if — inicia uma estrutura condicional.
 
-### 4. Operadores Aditivos e de Bits
-* `+ -` : Soma e subtração.
-* `| ^` : OR e XOR de bits.
+else — define o bloco executado quando a condição do if é falsa.
 
-### 5. Comparações e Validação
-* `== !=` : Igualdade e desigualdade.
-* `< > <= >=` : Comparação de magnitude.
+for — inicia uma estrutura de repetição.
 
-### 6. Operações Lógicas
-* `&&` : E lógico.
-* `||` : OU lógico.
+return — retorna um valor a partir de uma função.
 
-### 7. Atribuição (Menor Precedência)
-* `:=` : Declaração com inferência de tipo.
-* `=` : Atribuição simples.
-* `+= -= *= /=` : Atribuições compostas.
+### 2.3. Definição de Funções e Variáveis
 
----
+fn — declara uma função.
 
-## 3. Sinalização Estrutural (Delimitadores)
+mut — indica que uma variável é mutável.
 
-Símbolos que organizam a hierarquia e o escopo do código:
+## 3. Operadores
 
-* `{ }` : Envolvem blocos de código e corpos de funções.
-* `[ ]` : Utilizados para indexação e definição de arrays/mapas.
-* `( )` : Agrupam expressões e delimitam parâmetros de funções.
-* `? !` : Marcadores de tipos opcionais ou que podem retornar erros.
+Os operadores definem as operações que podem ser realizadas sobre valores e variáveis. A tabela a seguir apresenta os operadores suportados, organizados por categoria, precedência e associatividade.
 
----
+### 3.1. Operadores Aritméticos
+| Operador | Descrição     | Precedência | Associatividade |
+| :------: | ------------- | :---------: | :-------------: |
+|    `+`   | Adição        |      4      |     Direita     |
+|    `-`   | Subtração     |      4      |     Direita     |
+|    `*`   | Multiplicação |      5      |     Direita     |
+|    `/`   | Divisão       |      5      |     Direita     |
+### 3.2. Operadores de Atribuição
+| Operador | Descrição                                     | Precedência | Associatividade |
+| :------: | --------------------------------------------- | :---------: | :-------------: |
+|    `=`   | Atribuição simples                            |      1      |     Direita     |
+|   `:=`   | Declaração de variável com inferência de tipo |      1      |     Direita     |
+### 3.3. Operadores de Comparação
+| Operador | Descrição        | Precedência | Associatividade |
+| :------: | ---------------- | :---------: | :-------------: |
+|   `==`   | Igualdade        |      3      |     Direita     |
+|   `!=`   | Diferença        |      3      |     Direita     |
+|    `<`   | Menor que        |      3      |     Direita     |
+|   `<=`   | Menor ou igual a |      3      |     Direita     |
+|    `>`   | Maior que        |      3      |     Direita     |
+|   `>=`   | Maior ou igual a |      3      |     Direita     |
+### 3.4. Operadores Lógicos
+| Operador | Descrição      | Precedência | Associatividade |
+| :------: | -------------- | :---------: | :-------------: |
+|   `&&`   | E lógico       |      2      |     Direita     |
+|  `\|\|`  | OU lógico      |      1      |     Direita     |
+|    `!`   | Negação lógica |      5      |     Esquerda    |
+## 4. Delimitadores
 
-## 4. Padrões de Nomeação (Identificadores)
+Os delimitadores são símbolos utilizados para estruturar o código-fonte, organizar expressões e definir blocos de comandos.
 
-Regras para a criação de nomes por parte do desenvolvedor:
+Parênteses () — utilizados para agrupamento de expressões e chamadas de função.
 
-* **Formato:** Devem obrigatoriamente começar com letra ou underline (`_`).
-* **Estilo:** A linguagem V incentiva estritamente o `snake_case` (ex: `meu_valor`, `calcular_area`).
-* **Restrição:** Não são permitidos caracteres especiais ou espaços.
+Chaves {} — delimitam blocos de código, como corpos de funções, condicionais e laços.
 
----
+Colchetes [] — utilizados para indexação de estruturas e definição de listas.
 
-## 5. Representação de Texto (Strings)
+Vírgula , — separa argumentos em chamadas de função e listas de elementos.
 
-Diferente de linguagens como Lua, a V trata strings de forma muito específica:
+Ponto e vírgula ; — opcional, podendo ser utilizado para separar comandos explicitamente.
 
-* **Aspas Simples (`' '`):** É o padrão da linguagem para strings.
-* **Aspas Duplas (`" "`):** Também permitidas, geralmente usadas se a string contiver aspas simples.
-* **Interpolação:** Usa-se o cifrão dentro da string para injetar valores: `'Olá, $nome'`.
+## 5. Identificadores
 
----
+Identificadores são nomes atribuídos a variáveis, funções e outros elementos definidos pelo programador.
 
-## 6. Literais e Formatação Numérica
+### 5.1. Regras de Formação
 
-* **Inteiros:** `100`, `-5`. Permite o uso de underscores para legibilidade: `1_000_000`.
-* **Decimais:** `3.14`, `.5`.
-* **Bases Especiais:** `0x` (Hex), `0b` (Binário), `0o` (Octal).
+Devem iniciar com uma letra (a-z ou A-Z) ou sublinhado (_).
 
----
+Podem conter letras, números (0-9) e sublinhados após o primeiro caractere.
 
-## 7. Documentação de Código (Comentários)
+São sensíveis a maiúsculas e minúsculas (case-sensitive).
 
-Essenciais para a leitura humana, são ignorados pelo processo de compilação:
+Não podem coincidir com palavras reservadas da linguagem.
 
-```
-// Comentário de linha única.
+Não podem conter espaços ou caracteres especiais.
 
-/* Comentário de múltiplas 
-   linhas ou blocos.
-*/
-```
----
-## 8. Diagnóstico de Integridade (Erros)
+### 5.2. Exemplos Válidos
 
-O compilador atua como a primeira linha de defesa contra bugs:
+contador
 
-* **Erro de Lexer** : Caractere inválido ou não reconhecido.
-* **Erro de Mutabilidade** : Tentar alterar uma variável sem o modificador `mut`.
-* **Aviso de Variável Não Utilizada** : A V **não compila** se houver variáveis declaradas que não são usadas (garantia de código limpo).
+_total
+
+valor1
+
+MinhaFuncao
+
+## 6. Literais Numéricos
+
+A linguagem suporta literais numéricos inteiros e de ponto flutuante, escritos na base decimal.
+
+### 6.1. Inteiros
+
+Representam números inteiros sem parte fracionária.
+
+Exemplos: 0, 10, 42, 1000
+
+### 6.2. Ponto Flutuante
+
+Representam números reais com parte fracionária.
+
+Exemplos: 3.14, 0.5, 10.0
+
+## 7. Literais de String
+
+Literais de string representam sequências de caracteres e podem ser delimitados por aspas simples (' ') ou aspas duplas (" ").
+
+Sequências de escape comuns são reconhecidas, como:
+
+\n — nova linha
+
+\t — tabulação
+
+\" — aspas duplas
+
+\' — aspas simples
+
+Exemplo
+mensagem := "Olá, mundo!\n"
+
+## 8. Comentários
+
+Comentários são ignorados pelo compilador e utilizados apenas para documentação do código.
+
+Comentário de linha: inicia com // e termina no fim da linha.
+
+Comentário de bloco: delimitado por /* e */.
+
+## 9. Erros Léxicos
+
+Um erro léxico ocorre quando o analisador léxico encontra uma sequência de caracteres que não corresponde a nenhum token válido da linguagem.
+
+Exemplos de erros léxicos incluem:
+
+Uso de caracteres inválidos.
+
+Identificadores iniciados por números.
+
+Literais mal formados.
+
+Espaços em branco, tabulações e quebras de linha são ignorados durante o reconhecimento de tokens, sendo utilizados apenas para rastreamento de posição (linha e coluna) com o objetivo de fornecer mensagens de erro precisas.
+
+## 10. Considerações Finais
+
+Esta especificação léxica define um subconjunto da linguagem V suficientemente expressivo para permitir a construção de programas funcionais, ao mesmo tempo em que mantém a complexidade necessária para a implementação de um compilador completo em ambiente acadêmico.
