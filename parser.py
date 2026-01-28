@@ -33,6 +33,33 @@ def p_lista_funcoes(p):
     else:
         p[0] = [p[1]]
 
+
+
+# ANALISAR ESSA FUNÇÃO AI DPS
+
+#def p_funcao(p):
+ #   '''funcao : FN ID LPAREN param RPAREN bloco
+ #             | FN ID LPAREN RPAREN bloco'''
+  #  
+ #   if len(p) == 6:  # FN ID LPAREN RPAREN bloco
+ #       p[0] = ('funcao', p[2], [], p[5])  # sem parâmetros
+ #   else:            # FN ID LPAREN param RPAREN bloco
+ #       p[0] = ('funcao', p[2], p[4], p[6])  # com parâmetros
+
+
+
+#def p_param_simples(p):
+ #   'param : ID'
+ #   p[0] = [p[1]]  # lista com 1 parâmetro
+
+#def p_param_varios(p):
+#    'param : ID COMMA param'
+#    p[0] = [p[1]] + p[3]  # concatena recursivamente
+
+
+
+
+
 def p_funcao(p):
     'funcao : FN ID LPAREN RPAREN bloco'
     p[0] = ('funcao', p[2], p[5])
@@ -65,13 +92,41 @@ def p_atribuicao(p):
     'atribuicao : ID ASSIGN expressao'
     p[0] = ('assign', p[1], p[3])
 
+    
+ #Tem que testar ai dps
 def p_comando_if(p):
     '''comando_if : IF expressao bloco
-                   | IF expressao bloco ELSE bloco'''
+                   | IF expressao bloco ELSE bloco
+                   | IF expressao bloco elseIfList
+                   | IF expressao bloco elseIfList ELSE bloco'''
+    
     if len(p) == 4:
+        # if simples
         p[0] = ('if', p[2], p[3])
-    else:
+    
+    elif len(p) == 6 and p[1] == 'if':
+        # if ... else ...
         p[0] = ('if_else', p[2], p[3], p[5])
+    
+    elif len(p) == 5:
+        # if ... else if ...
+        p[0] = ('if_elseif', p[2], p[3], p[4])
+    
+    elif len(p) == 7:
+        # if ... else if ... else ...
+        p[0] = ('if_elseif_else', p[2], p[3], p[4], p[6])
+
+
+def p_elseIfList_simples(p):
+    'elseIfList : ELSE IF expressao bloco'
+    p[0] = [('elseif', p[3], p[4])]
+
+def p_elseIfList_varios(p):
+    'elseIfList : ELSE IF expressao bloco elseIfList'
+    p[0] = [('elseif', p[3], p[4])] + p[5]
+
+
+
 
 def p_comando_for(p):
     'comando_for : FOR expressao bloco'

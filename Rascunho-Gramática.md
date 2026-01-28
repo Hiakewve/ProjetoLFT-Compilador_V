@@ -26,8 +26,8 @@ comando_if → if expressao block
            | if expressao block elseIfList
            | if expressao block elseIfList else block
 
-elseIfList → elseIf expressao block
-           | elseIf expressao block elseIfList
+elseIfList → else if expressao block
+           | else if expressao block elseIfList
 
 
 
