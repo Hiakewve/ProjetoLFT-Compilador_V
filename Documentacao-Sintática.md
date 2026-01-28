@@ -34,6 +34,7 @@ Os comandos suportados pela linguagem são:
 - Estrutura condicional (if)
 - Estrutura de repetição (for)
 - Retorno de função
+- Chamada de Função
 - Comando vazio (opcional)
 
 Todos os comandos devem terminar com ponto e vírgula (;), exceto blocos.

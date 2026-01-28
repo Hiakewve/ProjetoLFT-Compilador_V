@@ -1,7 +1,10 @@
 programa        → lista_funcoes
 lista_funcoes   → funcao lista_funcoes | funcao
 
-funcao          → FN ID LPAREN RPAREN bloco
+funcao          →   FN ID LPAREN param RPAREN bloco 
+                  | FN ID LPAREN  RPAREN bloco
+
+param           → ID | ID "," param
 
 bloco           → LBRACE lista_comandos RBRACE
 lista_comandos  → comando lista_comandos | ε
@@ -16,9 +19,17 @@ comando →
 declaracao      → MUT ID DECLARE_ASSIGN expressao
 atribuicao      → ID ASSIGN expressao
 
-comando_if →
-      IF expressao bloco
-    | IF expressao bloco ELSE bloco
+
+
+comando_if → if expressao block
+           | if expressao block else block
+           | if expressao block elseIfList
+           | if expressao block elseIfList else block
+
+elseIfList → elseIf expressao block
+           | elseIf expressao block elseIfList
+
+
 
 comando_for     → FOR expressao bloco
 
