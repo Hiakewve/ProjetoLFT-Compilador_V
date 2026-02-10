@@ -1,3 +1,4 @@
+
 import ply.yacc as yacc
 from lexico import tokens
 from lexico import lexer
@@ -65,16 +66,21 @@ def p_funcao(p):
     p[0] = ('funcao', p[2], p[5])
 
 def p_bloco(p):
-    'bloco : LBRACE lista_comandos RBRACE'
-    p[0] = p[2]
+    '''bloco : LBRACE lista_comandos RBRACE
+             | LBRACE RBRACE'''
+    if len(p) == 4:
+        p[0] = p[2] 
+    else:
+        p[0] = []    
 
 def p_lista_comandos(p):
-    '''lista_comandos : comando lista_comandos
-                       | '''
+    '''lista_comandos : lista_comandos comando
+                     | comando'''
     if len(p) == 3:
-        p[0] = [p[1]] + p[2]
+        p[1].append(p[2])
+        p[0] = p[1]
     else:
-        p[0] = []
+        p[0] = [p[1]]
 
 def p_comando(p):
     '''comando : declaracao SEMICOLON
