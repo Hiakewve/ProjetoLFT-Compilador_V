@@ -3,6 +3,110 @@ from lexico import tokens
 from lexico import lexer
 import sys
 
+
+#=========================
+# AST — CLASSES
+#=========================
+
+
+class Programa:
+    def __init__(self, funcoes):
+        self.funcoes = funcoes
+
+    
+
+class Funcao:
+    def __init__(self, nome, parametros, bloco):
+        self.nome = nome
+        self.parametros = parametros
+        self.bloco = bloco
+
+    
+
+class Bloco:
+    def __init__(self, comandos):
+        self.comandos = comandos
+
+   
+
+
+class Declaracao:
+    def __init__(self, nome, valor):
+        self.nome = nome
+        self.valor = valor
+
+    
+
+
+class Atribuicao:
+    def __init__(self, nome, valor):
+        self.nome = nome
+        self.valor = valor
+
+   
+
+
+class If:
+    def __init__(self, condicao, bloco_then, elifs, bloco_else):
+        self.condicao = condicao
+        self.bloco_then = bloco_then
+        self.elifs = elifs          
+        self.bloco_else = bloco_else
+
+
+class ElseIf:
+    def __init__(self, condicao, bloco):
+        self.condicao = condicao
+        self.bloco = bloco
+
+   
+
+
+class For:
+    def __init__(self, condicao, bloco):
+        self.condicao = condicao
+        self.bloco = bloco
+
+   
+
+
+class Return:
+    def __init__(self, valor):
+        self.valor = valor
+
+    
+
+
+class BinOp:
+    def __init__(self, esquerda, op, direita):
+        self.esquerda = esquerda
+        self.op = op
+        self.direita = direita
+
+    
+
+
+class Not:
+    def __init__(self, expr):
+        self.expr = expr
+
+    
+
+
+class Identificador:
+    def __init__(self, nome):
+        self.nome = nome
+
+    
+
+
+class Literal:
+    def __init__(self, valor):
+        self.valor = valor
+
+    
+
+
 # =========================
 # Precedência
 # =========================
@@ -23,58 +127,49 @@ precedence = (
 
 def p_programa(p):
     'programa : lista_funcoes'
-    p[0] = ('programa', p[1])
+    p[0] = Programa(p[1])
 
 def p_lista_funcoes(p):
     '''lista_funcoes : funcao lista_funcoes
-                      | funcao'''
+                     | funcao'''
     if len(p) == 3:
         p[0] = [p[1]] + p[2]
     else:
         p[0] = [p[1]]
 
 
-
-# ANALISAR ESSA FUNÇÃO AI DPS
-
-#def p_funcao(p):
- #   '''funcao : FN ID LPAREN param RPAREN bloco
- #             | FN ID LPAREN RPAREN bloco'''
-  #  
- #   if len(p) == 6:  # FN ID LPAREN RPAREN bloco
- #       p[0] = ('funcao', p[2], [], p[5])  # sem parâmetros
- #   else:            # FN ID LPAREN param RPAREN bloco
- #       p[0] = ('funcao', p[2], p[4], p[6])  # com parâmetros
-
-
-
-#def p_param_simples(p):
- #   'param : ID'
- #   p[0] = [p[1]]  # lista com 1 parâmetro
-
-#def p_param_varios(p):
-#    'param : ID COMMA param'
-#    p[0] = [p[1]] + p[3]  # concatena recursivamente
-
-
-
-
-
 def p_funcao(p):
-    'funcao : FN ID LPAREN RPAREN bloco'
-    p[0] = ('funcao', p[2], p[5])
+    '''funcao : FN ID LPAREN param RPAREN bloco
+              | FN ID LPAREN RPAREN bloco'''
+    if len(p) == 6:
+        p[0] = Funcao(p[2], [], p[5])
+    else:
+        p[0] = Funcao(p[2], p[4], p[6])
+
+def p_param_simples(p):
+    'param : ID'
+    p[0] = [p[1]]
+
+def p_param_varios(p):
+    'param : ID COMMA param'
+    p[0] = [p[1]] + p[3]
+
+
+
 
 def p_bloco(p):
     'bloco : LBRACE lista_comandos RBRACE'
-    p[0] = p[2]
+    p[0] = Bloco(p[2])
 
 def p_lista_comandos(p):
     '''lista_comandos : comando lista_comandos
-                       | '''
+                      | '''
     if len(p) == 3:
         p[0] = [p[1]] + p[2]
     else:
         p[0] = []
+
+
 
 def p_comando(p):
     '''comando : declaracao SEMICOLON
@@ -86,11 +181,11 @@ def p_comando(p):
 
 def p_declaracao(p):
     'declaracao : MUT ID DECLARE_ASSIGN expressao'
-    p[0] = ('decl', p[2], p[4])
+    p[0] = Declaracao(p[2], p[4])
 
 def p_atribuicao(p):
     'atribuicao : ID ASSIGN expressao'
-    p[0] = ('assign', p[1], p[3])
+    p[0] = Atribuicao(p[1], p[3])
 
     
  #Tem que testar ai dps
@@ -101,63 +196,59 @@ def p_comando_if(p):
                    | IF expressao bloco elseIfList ELSE bloco'''
     
     if len(p) == 4:
-        # if simples
-        p[0] = ('if', p[2], p[3])
-    
-    elif len(p) == 6 and p[1] == 'if':
-        # if ... else ...
-        p[0] = ('if_else', p[2], p[3], p[5])
-    
+        p[0] = If(p[2], p[3], [], None)
+
+    elif len(p) == 6 and p[4] == 'else':
+        p[0] = If(p[2], p[3], [], p[5])
+
     elif len(p) == 5:
-        # if ... else if ...
-        p[0] = ('if_elseif', p[2], p[3], p[4])
-    
+        p[0] = If(p[2], p[3], p[4], None)
+
     elif len(p) == 7:
-        # if ... else if ... else ...
-        p[0] = ('if_elseif_else', p[2], p[3], p[4], p[6])
+        p[0] = If(p[2], p[3], p[4], p[6])
 
 
 def p_elseIfList_simples(p):
     'elseIfList : ELSE IF expressao bloco'
-    p[0] = [('elseif', p[3], p[4])]
+    p[0] = [ElseIf(p[3], p[4])]
+
 
 def p_elseIfList_varios(p):
     'elseIfList : ELSE IF expressao bloco elseIfList'
-    p[0] = [('elseif', p[3], p[4])] + p[5]
-
+    p[0] = [ElseIf(p[3], p[4])] + p[5]
 
 
 
 def p_comando_for(p):
     'comando_for : FOR expressao bloco'
-    p[0] = ('for', p[2], p[3])
+    p[0] = For(p[2], p[3])
 
 def p_retorno(p):
     '''retorno : RETURN
-                | RETURN expressao'''
+               | RETURN expressao'''
     if len(p) == 2:
-        p[0] = ('return', None)
+        p[0] = Return(None)
     else:
-        p[0] = ('return', p[2])
+        p[0] = Return(p[2])
 
 def p_expressao_binaria(p):
     '''expressao : expressao PLUS expressao
-                  | expressao MINUS expressao
-                  | expressao TIMES expressao
-                  | expressao DIVIDE expressao
-                  | expressao EQ expressao
-                  | expressao NEQ expressao
-                  | expressao LT expressao
-                  | expressao LE expressao
-                  | expressao GT expressao
-                  | expressao GE expressao
-                  | expressao AND expressao
-                  | expressao OR expressao'''
-    p[0] = ('binop', p[2], p[1], p[3])
+                 | expressao MINUS expressao
+                 | expressao TIMES expressao
+                 | expressao DIVIDE expressao
+                 | expressao EQ expressao
+                 | expressao NEQ expressao
+                 | expressao LT expressao
+                 | expressao LE expressao
+                 | expressao GT expressao
+                 | expressao GE expressao
+                 | expressao AND expressao
+                 | expressao OR expressao'''
+    p[0] = BinOp(p[1], p[2], p[3])
 
 def p_expressao_not(p):
     'expressao : NOT expressao'
-    p[0] = ('not', p[2])
+    p[0] = Not(p[2])
 
 def p_expressao_group(p):
     'expressao : LPAREN expressao RPAREN'
@@ -165,15 +256,15 @@ def p_expressao_group(p):
 
 def p_expressao_id(p):
     'expressao : ID'
-    p[0] = ('id', p[1])
+    p[0] = Identificador(p[1])
 
 def p_expressao_literal(p):
     '''expressao : INT
-                  | FLOAT
-                  | TRUE
-                  | FALSE
-                  | STRING'''
-    p[0] = ('literal', p[1])
+                 | FLOAT
+                 | TRUE
+                 | FALSE
+                 | STRING'''
+    p[0] = Literal(p[1])
 
 def p_error(p):
     if p:
