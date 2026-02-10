@@ -1,7 +1,6 @@
 import ply.lex as lex
 
-# plavaras reservadas
-
+# Palavras reservadas
 reservadas = {
     'if': 'IF',
     'else': 'ELSE',
@@ -15,17 +14,19 @@ reservadas = {
 
 # tokens
 
+
 tokens = [
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE',
     'ASSIGN', 'DECLARE_ASSIGN',
     'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE',
     'AND', 'OR', 'NOT',
-    'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'SEMICOLON',
+    'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE', 'COMMA', 'SEMICOLON',
     'INT', 'FLOAT', 'STRING',
     'ID',
 ] + list(reservadas.values())
 
 # regras de regex
+
 
 t_DECLARE_ASSIGN = r':='
 t_EQ = r'=='
@@ -48,8 +49,6 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]'
 t_COMMA = r','
 t_SEMICOLON = r';'
 
