@@ -208,14 +208,16 @@ def p_comando_if(p):
         p[0] = If(p[2], p[3], p[4], p[6])
 
 
-def p_elseIfList_simples(p):
-    'elseIfList : ELSE IF expressao bloco'
-    p[0] = [ElseIf(p[3], p[4])]
-
-
-def p_elseIfList_varios(p):
-    'elseIfList : ELSE IF expressao bloco elseIfList'
-    p[0] = [ElseIf(p[3], p[4])] + p[5]
+def p_elseIfList(p):
+    '''elseIfList : elseIfList ELSE IF expressao bloco
+                  | ELSE IF expressao bloco'''
+    if len(p) == 6:
+        # Caso: Já existe uma lista (p[1]), adicionamos um novo ElseIf nela
+        p[1].append(ElseIf(p[4], p[5]))
+        p[0] = p[1]
+    else:
+        # Caso: É o primeiro ElseIf da lista
+        p[0] = [ElseIf(p[3], p[4])]
 
 
 
