@@ -1,225 +1,90 @@
 import ply.yacc as yacc
 from lexico import tokens
 from lexico import lexer
+from ast_nodes import *
 import sys
 
-
-# =========================
-# AST — CLASSES
-# =========================
-
-
-class Programa:
-    def __init__(self, funcoes):
-        self.funcoes = funcoes
-
-    
-
-class Funcao:
-    def __init__(self, nome, parametros, bloco):
-        self.nome = nome
-        self.parametros = parametros
-        self.bloco = bloco
-
-    
-
-class Bloco:
-    def __init__(self, comandos):
-        self.comandos = comandos
-
-   
-
-
-class Declaracao:
-    def __init__(self, nome, valor):
-        self.nome = nome
-        self.valor = valor
-
-    
-
-
-class Atribuicao:
-    def __init__(self, nome, valor):
-        self.nome = nome
-        self.valor = valor
-
-   
-
-
-class If:
-    def __init__(self, condicao, bloco_then, elifs, bloco_else):
-        self.condicao = condicao
-        self.bloco_then = bloco_then
-        self.elifs = elifs          
-        self.bloco_else = bloco_else
-
-
-class ElseIf:
-    def __init__(self, condicao, bloco):
-        self.condicao = condicao
-        self.bloco = bloco
-
-   
-
-
-class For:
-    def __init__(self, condicao, bloco):
-        self.condicao = condicao
-        self.bloco = bloco
-
-   
-
-
-class Return:
-    def __init__(self, valor):
-        self.valor = valor
-
-    
-
-
-class BinOp:
-    def __init__(self, esquerda, op, direita):
-        self.esquerda = esquerda
-        self.op = op
-        self.direita = direita
-
-    
-
-
-class Not:
-    def __init__(self, expr):
-        self.expr = expr
-
-    
-
-
-class Identificador:
-    def __init__(self, nome):
-        self.nome = nome
-
-    
-
-
-class Literal:
-    def __init__(self, valor):
-        self.valor = valor
-
-    
-
-
-# =========================
-# Precedência
-# =========================
-
 precedence = (
-    ('left', 'OR'),
-    ('left', 'AND'),
-    ('left', 'EQ', 'NEQ'),
-    ('left', 'LT', 'LE', 'GT', 'GE'),
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE'),
-    ('right', 'NOT'),
+    ('left', 'OR'),           # 1
+    ('left', 'AND'),          # 2
+    ('left', 'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE'), # 3
+    ('left', 'PLUS', 'MINUS'), # 4
+    ('left', 'TIMES', 'DIVIDE'), # 5
+    ('right', 'NOT'),         # 5 (Unário)
 )
 
-# =========================
-# Gramática
-# =========================
+
+# Regras:
+
 
 def p_programa(p):
     'programa : lista_funcoes'
     p[0] = Programa(p[1])
 
 def p_lista_funcoes(p):
-    '''lista_funcoes : funcao lista_funcoes
+    '''lista_funcoes : lista_funcoes funcao
                      | funcao'''
     if len(p) == 3:
-        p[0] = [p[1]] + p[2]
+        p[0] = p[1] + [p[2]]
     else:
         p[0] = [p[1]]
 
-
 def p_funcao(p):
-    '''funcao : FN ID LPAREN param RPAREN bloco
-              | FN ID LPAREN RPAREN bloco'''
-    if len(p) == 6:
-        p[0] = Funcao(p[2], [], p[5])
+    '''funcao : FN ID LPAREN params_opt RPAREN bloco'''
+    p[0] = Funcao(p[2], p[4], p[6])
+
+def p_params_opt(p):
+    '''params_opt : params
+                  | empty'''
+    p[0] = p[1] if p[1] is not None else []
+
+def p_params(p):
+    '''params : params COMMA ID
+              | ID'''
+    if len(p) == 4:
+        p[0] = p[1] + [p[3]]
     else:
-        p[0] = Funcao(p[2], p[4], p[6])
-
-def p_param_simples(p):
-    'param : ID'
-    p[0] = [p[1]]
-
-def p_param_varios(p):
-    'param : ID COMMA param'
-    p[0] = [p[1]] + p[3]
-
-
-
+        p[0] = [p[1]]
 
 def p_bloco(p):
     'bloco : LBRACE lista_comandos RBRACE'
     p[0] = Bloco(p[2])
 
 def p_lista_comandos(p):
-    '''lista_comandos : comando lista_comandos
-                      | '''
+    '''lista_comandos : lista_comandos comando
+                      | empty'''
     if len(p) == 3:
-        p[0] = [p[1]] + p[2]
+        p[0] = p[1] + [p[2]]
     else:
         p[0] = []
 
-
-
 def p_comando(p):
     '''comando : declaracao SEMICOLON
-                | atribuicao SEMICOLON
-                | comando_if
-                | comando_for
-                | retorno SEMICOLON'''
+               | atribuicao SEMICOLON
+               | comando_if
+               | comando_for
+               | retorno SEMICOLON
+               | chamada_func SEMICOLON''' 
     p[0] = p[1]
 
+# Declaração usa := (MUT ID := Expr)
 def p_declaracao(p):
     'declaracao : MUT ID DECLARE_ASSIGN expressao'
     p[0] = Declaracao(p[2], p[4])
 
+# Atribuição usa = (ID = Expr)
 def p_atribuicao(p):
     'atribuicao : ID ASSIGN expressao'
     p[0] = Atribuicao(p[1], p[3])
 
-    
- #Tem que testar ai dps
+# IF conforme documentação (o elif é resolvido aninhando ifs no else)
 def p_comando_if(p):
     '''comando_if : IF expressao bloco
-                   | IF expressao bloco ELSE bloco
-                   | IF expressao bloco elseIfList
-                   | IF expressao bloco elseIfList ELSE bloco'''
-    
+                  | IF expressao bloco ELSE bloco'''
     if len(p) == 4:
-        p[0] = If(p[2], p[3], [], None)
-
-    elif len(p) == 6 and p[4] == 'else':
-        p[0] = If(p[2], p[3], [], p[5])
-
-    elif len(p) == 5:
-        p[0] = If(p[2], p[3], p[4], None)
-
-    elif len(p) == 7:
-        p[0] = If(p[2], p[3], p[4], p[6])
-
-
-def p_elseIfList(p):
-    '''elseIfList : elseIfList ELSE IF expressao bloco
-                  | ELSE IF expressao bloco'''
-    if len(p) == 6:
-        # Caso: Já existe uma lista (p[1]), adicionamos um novo ElseIf nela
-        p[1].append(ElseIf(p[4], p[5]))
-        p[0] = p[1]
+        p[0] = If(p[2], p[3])
     else:
-        # Caso: É o primeiro ElseIf da lista
-        p[0] = [ElseIf(p[3], p[4])]
-
-
+        p[0] = If(p[2], p[3], p[5])
 
 def p_comando_for(p):
     'comando_for : FOR expressao bloco'
@@ -232,6 +97,26 @@ def p_retorno(p):
         p[0] = Return(None)
     else:
         p[0] = Return(p[2])
+
+# Chamada de função como comando (ex: print(x);)
+def p_chamada_func(p):
+    'chamada_func : ID LPAREN args_opt RPAREN'
+    p[0] = ChamadaFuncao(p[1], p[3])
+
+def p_args_opt(p):
+    '''args_opt : args
+                | empty'''
+    p[0] = p[1] if p[1] is not None else []
+
+def p_args(p):
+    '''args : args COMMA expressao
+            | expressao'''
+    if len(p) == 4:
+        p[0] = p[1] + [p[3]]
+    else:
+        p[0] = [p[1]]
+
+# --- Expressões ---
 
 def p_expressao_binaria(p):
     '''expressao : expressao PLUS expressao
@@ -248,17 +133,21 @@ def p_expressao_binaria(p):
                  | expressao OR expressao'''
     p[0] = BinOp(p[1], p[2], p[3])
 
-def p_expressao_not(p):
+def p_expressao_unaria(p):
     'expressao : NOT expressao'
-    p[0] = Not(p[2])
+    p[0] = UnaryOp(p[1], p[2])
 
 def p_expressao_group(p):
     'expressao : LPAREN expressao RPAREN'
     p[0] = p[2]
 
-def p_expressao_id(p):
-    'expressao : ID'
-    p[0] = Identificador(p[1])
+def p_expressao_atomos(p):
+    '''expressao : ID
+                 | chamada_func'''
+    if isinstance(p[1], ChamadaFuncao):
+        p[0] = p[1]
+    else:
+        p[0] = Identificador(p[1])
 
 def p_expressao_literal(p):
     '''expressao : INT
@@ -266,27 +155,30 @@ def p_expressao_literal(p):
                  | TRUE
                  | FALSE
                  | STRING'''
-    p[0] = Literal(p[1])
+    # Detectar tipo baseado no token é ideal, mas aqui faremos inferência básica
+    val = p[1]
+    tipo = 'UNKNOWN'
+    if isinstance(val, int) and val is not True and val is not False: tipo = 'INT'
+    elif isinstance(val, float): tipo = 'FLOAT'
+    elif isinstance(val, str): tipo = 'STRING'
+    elif str(val) == 'true' or str(val) == 'false': tipo = 'BOOL' # String vinda do lexer
+    
+    # Ajuste para booleanos do lexer que podem vir como string 'true'/'false'
+    if p.slice[1].type in ['TRUE', 'FALSE']:
+        tipo = 'BOOL'
+        val = p.slice[1].value # pegando valor cru
+
+    p[0] = Literal(val, tipo)
+
+def p_empty(p):
+    'empty :'
+    pass
 
 def p_error(p):
     if p:
-        print(f"Erro sintático em '{p.value}' na linha {p.lineno}")
+        print(f"Erro sintático no token '{p.value}' (linha {p.lineno})")
     else:
         print("Erro sintático no fim do arquivo")
 
-parser = yacc.yacc()
-
-# =========================
-# Execução
-# =========================
-
-if __name__ == "__main__":
-    filename = "Teste_Léxico.v"
-
-    with open(filename, "r", encoding="utf-8") as f:
-        source = f.read()
-
-    ast = parser.parse(source, lexer=lexer)
-
-    print("\n# AST gerada:")
-    print(ast)
+# Criando o parser
+parser = yacc.yacc(debug=True, write_tables=True, tabmodule='parser_tab')
