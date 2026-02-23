@@ -62,14 +62,14 @@ class PrettyPrinter(Visitor):
         return f"{node.nome} = {node.expr.accept(self)};"
 
     def visit_If(self, node):
-        # Reconstrói: if condicao { ... } else { ... }
+        # Reconstrói: if condicao TRECHO else TRECHO
         resultado = f"if {node.condicao.accept(self)} {node.bloco_then.accept(self)}"
         if node.bloco_else:
             resultado += f" else {node.bloco_else.accept(self)}"
         return resultado
 
     def visit_For(self, node):
-        # Reconstrói: for condicao { ... }
+        # Reconstrói: for condicao TRECHO
         return f"for {node.condicao.accept(self)} {node.bloco.accept(self)}"
 
     def visit_Return(self, node):
@@ -90,7 +90,7 @@ class PrettyPrinter(Visitor):
         return f"{node.op}{node.operand.accept(self)}"
 
     def visit_Literal(self, node):
-        # Tratamento especial para garantir que strings tenham aspas
+        # Tratamento para garantir que strings tenham aspas
         # e booleanos sejam minúsculos 
         if node.tipo == 'STRING':
             return f'"{node.valor}"'
@@ -101,7 +101,7 @@ class PrettyPrinter(Visitor):
     def visit_Identificador(self, node):
         return node.nome
 
-# TESTE INTEGRADO
+# TESTE 
 
 if __name__ == "__main__":
     import sys

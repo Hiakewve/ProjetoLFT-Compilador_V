@@ -1,14 +1,15 @@
 import sys
 from lexico import lexer
 from parser import parser
-
+from visitor import Visitor
+from test_semantico import testar_semantica
 
 # CÓDIGO FONTE DE TESTE 
 
 codigo_fonte = """
 fn main() {
     mut x := 10;
-    mut y := 20.5;
+    mut y := 20.05;
 
     // Testando condicional
     if x < y {
@@ -49,3 +50,4 @@ if __name__ == "__main__":
     
      teste_lexico(codigo_fonte)
      teste_parser_raw(codigo_fonte)
+     testar_semantica(codigo_fonte, "Teste semantico")

@@ -73,7 +73,7 @@ class Return(Node):
     def accept(self, visitor):
         return visitor.visit_Return(self)
 
-class ChamadaFuncao(Node):
+class ChamadaFuncao(Node): 
     def __init__(self, nome, args):
         self.nome = nome
         self.args = args

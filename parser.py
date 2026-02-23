@@ -180,5 +180,4 @@ def p_error(p):
     else:
         print("Erro sintático no fim do arquivo")
 
-# Criando o parser
 parser = yacc.yacc(debug=True, write_tables=True, tabmodule='parser_tab')
