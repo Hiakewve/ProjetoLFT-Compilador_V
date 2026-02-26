@@ -21,7 +21,7 @@ class Visitor:
 
 class PrettyPrinter(Visitor):
     """
-    Reconstrói o código fonte a partir da AST.
+    Reconstrói o código
     """
     def __init__(self):
         self.indent_level = 0
@@ -32,13 +32,11 @@ class PrettyPrinter(Visitor):
 
     def visit_Programa(self, node):
         resultado = ""
-        # node.funcoes
         for func in node.funcoes:
             resultado += func.accept(self) + "\n\n"
         return resultado
 
     def visit_Funcao(self, node):
-        # node.params 
         params_str = ", ".join(node.params)
         # Visita o bloco da função
         bloco_str = node.bloco.accept(self)
@@ -62,14 +60,14 @@ class PrettyPrinter(Visitor):
         return f"{node.nome} = {node.expr.accept(self)};"
 
     def visit_If(self, node):
-        # Reconstrói: if condicao TRECHO else TRECHO
+        # if condicao TRECHO else TRECHO
         resultado = f"if {node.condicao.accept(self)} {node.bloco_then.accept(self)}"
         if node.bloco_else:
             resultado += f" else {node.bloco_else.accept(self)}"
         return resultado
 
     def visit_For(self, node):
-        # Reconstrói: for condicao TRECHO
+        # for condicao TRECHO
         return f"for {node.condicao.accept(self)} {node.bloco.accept(self)}"
 
     def visit_Return(self, node):
@@ -78,7 +76,7 @@ class PrettyPrinter(Visitor):
         return "return;"
 
     def visit_ChamadaFuncao(self, node):
-        # Reconstrói: funcao(arg1, arg2)
+        # funcao(arg1, arg2)
         args_str = ", ".join([arg.accept(self) for arg in node.args])
         return f"{node.nome}({args_str})"
 

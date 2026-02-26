@@ -4,12 +4,12 @@ from parser import parser
 from visitor import Visitor
 from test_semantico import testar_semantica
 
-# CÓDIGO FONTE DE TESTE 
+# CÓDIGO DE TESTE 
 
 codigo_fonte = """
 fn main() {
     mut x := 10;
-    mut y := 20.05;
+    mut y := 20;
 
     // Testando condicional
     if x < y {
@@ -26,6 +26,9 @@ fn main() {
 
     return x;
 }
+fn funcao2() {
+    mut x := 15;
+}
 """
 
 def teste_lexico(source):
@@ -34,7 +37,7 @@ def teste_lexico(source):
     while True:
         tok = lexer.token()
         if not tok:
-            break      # Sem mais dados
+            break      
         print(f"Token: {tok.type:<15} Valor: {tok.value:<10} Linha: {tok.lineno}")
 
 def teste_parser_raw(source):

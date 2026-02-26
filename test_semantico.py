@@ -4,27 +4,27 @@ from semantico import SemanticVisitor
 def testar_semantica(codigo, descricao):
     print(f"\n--- Teste: {descricao} ---")
     
-    # 1. Parsing (Gera AST)
+    # 1. Parsing 
     ast = parser.parse(codigo)
     
     if not ast:
         print("Erro de Sintaxe (Parser falhou).")
         return
 
-    # 2. Análise Semântica (Visitor percorre AST)
+    # 2. Análise Semântica 
     semantic_visitor = SemanticVisitor()
     
-    # A MÁGICA ACONTECE AQUI:
+    # 3. Uso do accept
     erros = ast.accept(semantic_visitor)
 
     if not erros:
-        print("✅ Sucesso! Nenhum erro semântico encontrado.")
+        print("Sucesso! Nenhum erro semântico encontrado.")
     else:
-        print("❌ Erros encontrados:")
+        print(" Erros encontrados:")
         for erro in erros:
             print(f"   - {erro}")
 
-# --- Casos de Teste ---
+# Casos de Teste 
 
 # Caso 1: Código Correto
 codigo_bom = """

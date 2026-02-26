@@ -77,7 +77,7 @@ def p_atribuicao(p):
     'atribuicao : ID ASSIGN expressao'
     p[0] = Atribuicao(p[1], p[3])
 
-# IF conforme documentação (o elif é resolvido aninhando ifs no else)
+# IF (o elif é resolvido aninhando ifs no else)
 def p_comando_if(p):
     '''comando_if : IF expressao bloco
                   | IF expressao bloco ELSE bloco'''
@@ -116,7 +116,7 @@ def p_args(p):
     else:
         p[0] = [p[1]]
 
-# --- Expressões ---
+#  Expressões
 
 def p_expressao_binaria(p):
     '''expressao : expressao PLUS expressao
@@ -155,7 +155,7 @@ def p_expressao_literal(p):
                  | TRUE
                  | FALSE
                  | STRING'''
-    # Detectar tipo baseado no token é ideal, mas aqui faremos inferência básica
+    # Detectar tipo baseado no token é ideal
     val = p[1]
     tipo = 'UNKNOWN'
     if isinstance(val, int) and val is not True and val is not False: tipo = 'INT'
@@ -166,7 +166,7 @@ def p_expressao_literal(p):
     # Ajuste para booleanos do lexer que podem vir como string 'true'/'false'
     if p.slice[1].type in ['TRUE', 'FALSE']:
         tipo = 'BOOL'
-        val = p.slice[1].value # pegando valor cru
+        val = p.slice[1].value 
 
     p[0] = Literal(val, tipo)
 

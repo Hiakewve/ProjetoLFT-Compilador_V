@@ -3,14 +3,14 @@ from visitor import Visitor
 
 class TabelaSimbolos:
     def __init__(self):
-        # Pilha de escopos. O índice 0 é o global.
+        # Pilha de escopos, O índice 0 é o global.
         self.scopes = [{}] 
 
     def enter_scope(self):
         """Cria um novo escopo (ex: entrar em uma função ou bloco)"""
         self.scopes.append({})
 
-    def exit_scope(self):
+    def exit_scope(self): 
         """Sai do escopo atual."""
         self.scopes.pop()
 
@@ -18,7 +18,7 @@ class TabelaSimbolos:
         """Registra uma variável no escopo atual"""
         escopo_atual = self.scopes[-1]
         if nome in escopo_atual:
-            return False # Erro: Variável já declarada neste escopo
+            return False # Erro: Variável já declarada no escopo
         escopo_atual[nome] = {'tipo': tipo, 'mut': mutavel}
         return True
 
@@ -40,10 +40,8 @@ class SemanticVisitor(Visitor):
     #  Estrutura Geral 
 
     def visit_Programa(self, node):
-        # Registra funções antes de visitar o corpo (para permitir recursão)
-        # Por simplicidade, assumimos que funções são globais
+        # assumimos que funções são globais
         for func in node.funcoes:
-            # Aqui poderíamos registrar a assinatura da função na tabela
             func.accept(self)
         
         # Se houver erros, retornamos a lista
@@ -51,10 +49,6 @@ class SemanticVisitor(Visitor):
 
     def visit_Funcao(self, node):
         self.tabela.enter_scope() # Novo escopo para parâmetros e corpo
-        
-        # Registrar parâmetros
-        # Como a gramática simplificada não tem tipo explícito no param,
-        # assumimos 'ANY'
         for param in node.params:
             self.tabela.define(param, 'ANY')
 
@@ -62,14 +56,19 @@ class SemanticVisitor(Visitor):
         self.tabela.exit_scope()
 
     def visit_Bloco(self, node):
+        # 1. Abre um novo dicionário de escopo na pilha
+        self.tabela.enter_scope() 
+        
         for cmd in node.comandos:
             cmd.accept(self)
-
+            
+        # 2. Destrói o dicionário ao sair do bloco 
+        self.tabela.exit_scope()
+        
     #  Declarações e Comandos 
 
     def visit_Declaracao(self, node):
-        # Inferência de tipo
-        tipo_expr = node.expr.accept(self) # Visita a expressão para descobrir o tipo
+        tipo_expr = node.expr.accept(self) # Visita a expressão para descobrir o tipo(Inferencia)
         
         if tipo_expr:
             sucesso = self.tabela.define(node.nome, tipo_expr, mutavel=True)
@@ -86,16 +85,15 @@ class SemanticVisitor(Visitor):
 
         tipo_expr = node.expr.accept(self)
         
-        # Verificação de Tipo (Ignora se for ANY ou UNKNOWN para evitar erros em cascata)
+        # Verificação de Tipo 
         if info_var['tipo'] != 'ANY' and tipo_expr != 'UNKNOWN' and tipo_expr != info_var['tipo']:
             # Permite coerção simples (int -> float) 
-            # Exceto se um for float e outro int, talvez queira permitir. 
+            # Exceto se um for float e outro int
             self.log_erro(f"Erro de Tipo: Atribuindo {tipo_expr} para variável '{node.nome}' ({info_var['tipo']}).")
 
     def visit_If(self, node):
         tipo_cond = node.condicao.accept(self)
         if tipo_cond != 'BOOL' and tipo_cond != 'ANY' and tipo_cond != 'UNKNOWN':
-             # Opcional: Warning ou Erro se condição não for booleana
              pass 
         
         node.bloco_then.accept(self)
@@ -111,10 +109,9 @@ class SemanticVisitor(Visitor):
             node.expr.accept(self)
 
     def visit_ChamadaFuncao(self, node):
-        # Aqui verificaríamos se a função existe e se os args batem
         for arg in node.args:
             arg.accept(self)
-        return 'ANY' # Retorna ANY pois não temos tabela de funções completa ainda
+        return 'ANY' 
 
     # Expressões (Retornam TIPOS)
 
@@ -157,7 +154,7 @@ class SemanticVisitor(Visitor):
         return tipo
 
     def visit_Literal(self, node):
-        # O nó literal já tem o tipo salvo pelo Parser
+        # O nó literal já tem o tipo salvo
         return node.tipo
 
     def visit_Identificador(self, node):
